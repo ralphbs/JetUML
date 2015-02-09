@@ -15,23 +15,27 @@ import java.util.List;
 import org.junit.Test;
 
 import ca.mcgill.cs.stg.jetuml.graph.ClassNode;
+import ca.mcgill.cs.stg.jetuml.graph.ClassRelationshipEdge;
 import ca.mcgill.cs.stg.jetuml.graph.Edge;
 import ca.mcgill.cs.stg.jetuml.graph.Graph;
 import ca.mcgill.cs.stg.jetuml.graph.InterfaceNode;
 import ca.mcgill.cs.stg.jetuml.graph.Node;
+import ca.mcgill.cs.stg.jetuml.graph.NoteEdge;
 import ca.mcgill.cs.stg.jetuml.graph.NoteNode;
 import ca.mcgill.cs.stg.jetuml.graph.PackageNode;
 import ca.mcgill.cs.stg.jetuml.graph.PointNode;
 
 public class TestPersistenceService
 {
+	private static final String TEST_FILE_NAME = "testdata/tmp";
+	
 	@Test
 	public void testClassDiagram() throws Exception
 	{
 		Graph graph = PersistenceService.read(new FileInputStream("testdata/testPersistenceService.class.jet"));
 		verifyClassDiagram(graph);
 		
-		File tmp = new File("testdata/tmp");
+		File tmp = new File(TEST_FILE_NAME);
 		tmp.delete();
 		PersistenceService.saveFile(graph, new FileOutputStream(tmp));
 		graph = PersistenceService.read(new FileInputStream(tmp));
@@ -108,5 +112,33 @@ public class TestPersistenceService
 		
 		Collection<Edge> edges = pGraph.getEdges();
 		assertEquals(6, edges.size());
+		Iterator<Edge> eIterator = edges.iterator();
+		ClassRelationshipEdge edge1 = (ClassRelationshipEdge) eIterator.next();
+		ClassRelationshipEdge edge2 = (ClassRelationshipEdge) eIterator.next();
+		ClassRelationshipEdge edge3 = (ClassRelationshipEdge) eIterator.next();
+		ClassRelationshipEdge edge4 = (ClassRelationshipEdge) eIterator.next();
+		NoteEdge edge5 = (NoteEdge) eIterator.next();
+		ClassRelationshipEdge edge6 = (ClassRelationshipEdge) eIterator.next();
+		
+	}
+	
+	@Test
+	public void testSequenceDiagram() throws Exception
+	{
+		Graph graph = PersistenceService.read(new FileInputStream("testdata/testPersistenceService.sequence.jet"));
+		verifySequenceDiagram(graph);
+		
+		File tmp = new File(TEST_FILE_NAME);
+		tmp.delete();
+		PersistenceService.saveFile(graph, new FileOutputStream(tmp));
+		graph = PersistenceService.read(new FileInputStream(tmp));
+		verifySequenceDiagram(graph);
+		tmp.delete();
+	}
+	
+	private void verifySequenceDiagram(Graph pGraph)
+	{
+		Collection<Node> nodes = pGraph.getNodes();
+		assertEquals(9, nodes.size());
 	}
 }

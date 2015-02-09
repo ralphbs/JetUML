@@ -47,6 +47,41 @@ public final class ArrowHead
 	
    private ArrowHead() {}
    
+   @Override
+   public String toString()
+   {
+	   String lReturn = "Unknown";
+	   if( this == NONE ) 
+	   {
+		   lReturn = "NONE";
+	   }
+	   else if( this == TRIANGLE )
+	   {
+		   lReturn = "TRIANGLE";
+	   }
+	   else if( this == BLACK_TRIANGLE )
+	   {
+		   lReturn = "BLACK_TRIANGLE";
+	   }
+	   else if( this == V )
+	   {
+		   lReturn = "V";
+	   }
+	   else if( this == HALF_V )
+	   {
+		   lReturn = "HALF_V";
+	   }
+	   else if( this == DIAMOND )
+	   {
+		   lReturn = "DIAMOND";
+	   }
+	   else if( this == BLACK_DIAMOND )
+	   {
+		   lReturn = "BLACK_DIAMOND";
+	   }
+	   return lReturn;
+   }
+   
    /**
     * Draws the arrowhead.
     * @param pGraphics2D the graphics context

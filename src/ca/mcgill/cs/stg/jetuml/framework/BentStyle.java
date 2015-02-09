@@ -86,6 +86,32 @@ public final class BentStyle
 		}
 		return getPath(STRAIGHT, pStart, pEnd);
    }
+	
+	@Override
+	public String toString()
+	{
+		if( this == STRAIGHT )
+		{
+			return "Straight";
+		}
+		else if( this == HV )
+		{
+			return "HV";
+		}
+		else if( this == VH )
+		{
+			return "VH";
+		}
+		else if( this == HVH)
+		{
+			return "HVH";
+		}
+		else if( this == VHV )
+		{
+			return "VHV";
+		}
+		return "Unknown";
+	}
 
 	/*
      * Gets the four connecting points at which a bent line

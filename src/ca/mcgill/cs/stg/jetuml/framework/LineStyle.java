@@ -52,5 +52,21 @@ public final class LineStyle
       return SOLID_STROKE;
    }
 
-
+   @Override
+   public String toString()
+   {
+	   if( this == SOLID )
+	   {
+		   return "SOLID";
+	   }
+	   else if( this == DOTTED )
+	   {
+		   return "DOTTED";
+	   }
+	   else
+	   {
+		   return "Unknown";
+	   }
+   }
+   
 }
