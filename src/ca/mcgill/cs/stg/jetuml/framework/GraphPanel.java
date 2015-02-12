@@ -285,21 +285,7 @@ public class GraphPanel extends JPanel
 		}
 		if(aFrame != null)
 		{
-			String title = aFrame.getFileName();
-			if(title != null)
-			{
-				if(aModified)
-				{
-					if(!aFrame.getTitle().endsWith("*"))
-					{
-						aFrame.setTitle(title + "*");
-					}
-				}
-				else
-				{
-					aFrame.setTitle(title);
-				}
-			}
+			aFrame.setTitle(aModified);
 		}
 	}
    
@@ -490,7 +476,10 @@ public class GraphPanel extends JPanel
 					if(selected instanceof Node)
 					{
 						Node n = (Node) selected;
-						n.translate(dx, dy);                           
+						if (!aSelectedElements.contains(n.getParent())) // parents are responsible for translating their children
+						{
+							n.translate(dx, dy); 
+						}	
 					}
 				}
 				// we don't want continuous layout any more because of multiple selection
