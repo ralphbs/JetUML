@@ -1,8 +1,7 @@
 package ca.mcgill.cs.stg.jetuml.framework;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+
 
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -14,6 +13,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import ca.mcgill.cs.stg.jetuml.graph.CallEdge;
 import ca.mcgill.cs.stg.jetuml.graph.CallNode;
 import ca.mcgill.cs.stg.jetuml.graph.ClassNode;
 import ca.mcgill.cs.stg.jetuml.graph.ClassRelationshipEdge;
@@ -26,6 +26,7 @@ import ca.mcgill.cs.stg.jetuml.graph.NoteEdge;
 import ca.mcgill.cs.stg.jetuml.graph.NoteNode;
 import ca.mcgill.cs.stg.jetuml.graph.PackageNode;
 import ca.mcgill.cs.stg.jetuml.graph.PointNode;
+import ca.mcgill.cs.stg.jetuml.graph.ReturnEdge;
 
 public class TestPersistenceService
 {
@@ -313,5 +314,73 @@ public class TestPersistenceService
 		assertEquals(new Rectangle2D.Double(538, 169, 0, 0), node9.getBounds());
 		assertTrue(node9.getChildren().isEmpty());
 		assertNull(node9.getParent());
+		
+		Collection<Edge> edges = pGraph.getEdges();
+		assertEquals(6, edges.size());
+		Iterator<Edge> eIterator = edges.iterator();
+		
+		CallEdge self = (CallEdge) eIterator.next(); 
+		CallEdge signal = (CallEdge) eIterator.next(); 
+		ReturnEdge retS = (ReturnEdge) eIterator.next(); 
+		CallEdge call1 = (CallEdge) eIterator.next(); 
+		ReturnEdge retC = (ReturnEdge) eIterator.next(); 
+		NoteEdge note = (NoteEdge) eIterator.next(); 
+		
+		assertEquals(new Rectangle2D.Double(268, 78, 77, 29), self.getBounds());
+		assertEquals(node3, self.getEnd());
+		assertEquals("V", self.getEndArrowHead().toString());
+		assertEquals("", self.getEndLabel());
+		assertEquals("SOLID", self.getLineStyle().toString());
+		assertEquals("selfCall()", self.getMiddleLabel());
+		assertEquals(node2, self.getStart());
+		assertEquals("NONE", self.getStartArrowHead().toString());
+		assertEquals("", self.getStartLabel());
+		assertFalse(self.isSignal());
+		
+		assertEquals(new Rectangle2D.Double(276, 102, 256, 19), signal.getBounds());
+		assertEquals(node5, signal.getEnd());
+		assertEquals("HALF_V", signal.getEndArrowHead().toString());
+		assertTrue(signal.isSignal());
+		assertEquals("", signal.getEndLabel());
+		assertEquals("SOLID", signal.getLineStyle().toString());
+		assertEquals("signal", signal.getMiddleLabel());
+		assertEquals(node3, signal.getStart());
+		assertEquals("NONE", signal.getStartArrowHead().toString());
+		assertEquals("", signal.getStartLabel());
+		
+		assertEquals(new Rectangle2D.Double(276, 146, 256, 10), retS.getBounds());
+		assertEquals(node3, retS.getEnd());
+		assertEquals("V", retS.getEndArrowHead().toString());
+		assertEquals("", retS.getEndLabel());
+		assertEquals("DOTTED", retS.getLineStyle().toString());
+		assertEquals("", retS.getMiddleLabel());
+		assertEquals(node5, retS.getStart());
+		assertEquals("NONE", retS.getStartArrowHead().toString());
+		assertEquals("", retS.getStartLabel());
+		
+		assertEquals(new Rectangle2D.Double(548, 126, 124, 24), call1.getBounds());
+		assertEquals(node7, call1.getEnd());
+		assertEquals("V", call1.getEndArrowHead().toString());
+		assertEquals("", call1.getEndLabel());
+		assertEquals("SOLID", call1.getLineStyle().toString());
+		assertEquals("call1", call1.getMiddleLabel());
+		assertEquals(node5, call1.getStart());
+		assertEquals("NONE", call1.getStartArrowHead().toString());
+		assertEquals("", call1.getStartLabel());
+		assertFalse(call1.isSignal());
+		
+		assertEquals(new Rectangle2D.Double(548, 156, 124, 24), retC.getBounds());
+		assertEquals(node5, retC.getEnd());
+		assertEquals("V", retC.getEndArrowHead().toString());
+		assertEquals("", retC.getEndLabel());
+		assertEquals("DOTTED", retC.getLineStyle().toString());
+		assertEquals("r1", retC.getMiddleLabel());
+		assertEquals(node7, retC.getStart());
+		assertEquals("NONE", retC.getStartArrowHead().toString());
+		assertEquals("", retC.getStartLabel());
+		
+		assertEquals(new Rectangle2D.Double(538, 169, 72, 44), note.getBounds());
+		assertEquals(node8, note.getStart());
+		assertEquals(node9, note.getEnd());
 	}
 }
