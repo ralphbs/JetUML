@@ -14,10 +14,12 @@ import java.util.List;
 
 import org.junit.Test;
 
+import ca.mcgill.cs.stg.jetuml.graph.CallNode;
 import ca.mcgill.cs.stg.jetuml.graph.ClassNode;
 import ca.mcgill.cs.stg.jetuml.graph.ClassRelationshipEdge;
 import ca.mcgill.cs.stg.jetuml.graph.Edge;
 import ca.mcgill.cs.stg.jetuml.graph.Graph;
+import ca.mcgill.cs.stg.jetuml.graph.ImplicitParameterNode;
 import ca.mcgill.cs.stg.jetuml.graph.InterfaceNode;
 import ca.mcgill.cs.stg.jetuml.graph.Node;
 import ca.mcgill.cs.stg.jetuml.graph.NoteEdge;
@@ -197,5 +199,68 @@ public class TestPersistenceService
 	{
 		Collection<Node> nodes = pGraph.getNodes();
 		assertEquals(9, nodes.size());
+		Iterator<Node> nIterator = nodes.iterator();
+		ImplicitParameterNode node1 = (ImplicitParameterNode) nIterator.next();
+		CallNode node2 = (CallNode) nIterator.next();
+		CallNode node3 = (CallNode) nIterator.next();
+		ImplicitParameterNode node4 = (ImplicitParameterNode) nIterator.next();
+		CallNode node5 = (CallNode) nIterator.next();
+		ImplicitParameterNode node6 = (ImplicitParameterNode) nIterator.next();
+		CallNode node7 = (CallNode) nIterator.next();
+		NoteNode node8 = (NoteNode) nIterator.next();
+		PointNode node9 = (PointNode) nIterator.next();
+		
+		assertEquals(new Rectangle2D.Double(210, 0, 100, 215), node1.getBounds());
+		assertEquals(0, node1.getChildren().size());
+		assertEquals("object1:Type1", node1.getName().toString());
+		assertNull(node1.getParent());
+		
+		assertEquals(new Rectangle2D.Double(252, 73, 16, 30), node2.getBounds());
+		List<Node> children = node2.getChildren();
+		assertEquals(1, children.size());
+		assertTrue(children.contains(node3));
+		assertEquals(node1, node2.getImplicitParameter());
+		assertNull(node2.getParent());
+		
+		// In sequence diagram call nodes have a children the call
+		// nodes they call
+		assertEquals(new Rectangle2D.Double(260, 102, 16, 30), node3.getBounds());
+		children = node3.getChildren();
+		assertEquals(1, children.size());
+		assertTrue(children.contains(node5));
+		assertEquals(node1, node3.getImplicitParameter());
+		assertEquals(node2, node3.getParent());
+		
+		assertEquals(new Rectangle2D.Double(500, 0, 80, 215), node4.getBounds());
+		assertEquals(0, node4.getChildren().size());
+		assertEquals(":Type2", node4.getName().toString());
+		assertNull(node4.getParent());
+		
+		assertEquals(new Rectangle2D.Double(532, 121, 16, 30), node5.getBounds());
+		children = node5.getChildren();
+		assertEquals(1, children.size());
+		assertTrue(children.contains(node7));
+		assertEquals(node4, node5.getImplicitParameter());
+		assertEquals(node3, node5.getParent());
+		
+		assertEquals(new Rectangle2D.Double(640, 0, 80, 215), node6.getBounds());
+		assertEquals(0, node6.getChildren().size());
+		assertEquals("object3:", node6.getName().toString());
+		assertNull(node6.getParent());
+		
+		assertEquals(new Rectangle2D.Double(672, 145, 16, 30), node7.getBounds());
+		children = node7.getChildren();
+		assertEquals(0, children.size());
+		assertEquals(node6, node7.getImplicitParameter());
+		assertEquals(node5, node7.getParent());
+		
+		assertTrue(node8.getChildren().isEmpty());
+		assertEquals("A note", node8.getText().getText());
+		assertNull(node8.getParent());
+		assertEquals(new Rectangle2D.Double(610, 210, 60, 40), node8.getBounds());
+		
+		assertEquals(new Rectangle2D.Double(538, 169, 0, 0), node9.getBounds());
+		assertTrue(node9.getChildren().isEmpty());
+		assertNull(node9.getParent());
 	}
 }

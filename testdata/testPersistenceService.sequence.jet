@@ -22,7 +22,7 @@
       <string>height</string>
       <void method="set">
        <object idref="Rectangle2D$Double0"/>
-       <double>201.0</double>
+       <double>215.0</double>
       </void>
      </void>
     </void>
@@ -71,7 +71,7 @@
               <string>height</string>
               <void method="set">
                <object idref="Rectangle2D$Double1"/>
-               <double>201.0</double>
+               <double>215.0</double>
               </void>
              </void>
             </void>
@@ -101,7 +101,7 @@
             <string>height</string>
             <void method="set">
              <object idref="Rectangle2D$Double2"/>
-             <double>201.0</double>
+             <double>215.0</double>
             </void>
            </void>
           </void>
@@ -239,12 +239,12 @@
      <string>y</string>
      <void method="set">
       <object idref="Point2D$Double6"/>
-      <double>131.0</double>
+      <double>145.0</double>
      </void>
     </void>
     <void method="setLocation">
      <double>672.0</double>
-     <double>131.0</double>
+     <double>145.0</double>
     </void>
    </object>
   </void>
@@ -346,12 +346,20 @@
    <object idref="CallNode1"/>
   </void>
   <void method="connect">
-   <object class="ca.mcgill.cs.stg.jetuml.graph.CallEdge"/>
+   <object class="ca.mcgill.cs.stg.jetuml.graph.CallEdge">
+    <void property="middleLabel">
+     <string>call1</string>
+    </void>
+   </object>
    <object idref="CallNode2"/>
    <object idref="CallNode3"/>
   </void>
   <void method="connect">
-   <object class="ca.mcgill.cs.stg.jetuml.graph.ReturnEdge"/>
+   <object class="ca.mcgill.cs.stg.jetuml.graph.ReturnEdge">
+    <void property="middleLabel">
+     <string>r1</string>
+    </void>
+   </object>
    <object idref="CallNode3"/>
    <object idref="CallNode2"/>
   </void>
