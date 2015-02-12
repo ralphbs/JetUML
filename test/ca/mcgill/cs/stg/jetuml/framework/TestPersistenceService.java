@@ -114,12 +114,69 @@ public class TestPersistenceService
 		assertEquals(6, edges.size());
 		Iterator<Edge> eIterator = edges.iterator();
 		ClassRelationshipEdge edge1 = (ClassRelationshipEdge) eIterator.next();
-		ClassRelationshipEdge edge2 = (ClassRelationshipEdge) eIterator.next();
-		ClassRelationshipEdge edge3 = (ClassRelationshipEdge) eIterator.next();
-		ClassRelationshipEdge edge4 = (ClassRelationshipEdge) eIterator.next();
-		NoteEdge edge5 = (NoteEdge) eIterator.next();
-		ClassRelationshipEdge edge6 = (ClassRelationshipEdge) eIterator.next();
+		assertEquals("VHV", edge1.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(515, 130, 22, 50), edge1.getBounds());
+		assertEquals(node2, edge1.getEnd());
+		assertEquals("TRIANGLE", edge1.getEndArrowHead().toString());
+		assertEquals("", edge1.getEndLabel());
+		assertEquals("DOTTED", edge1.getLineStyle().toString());
+		assertEquals("e2", edge1.getMiddleLabel());
+		assertEquals(node1, edge1.getStart());
+		assertEquals("NONE", edge1.getStartArrowHead().toString());
+		assertEquals("", edge1.getStartLabel());
 		
+		ClassRelationshipEdge edge2 = (ClassRelationshipEdge) eIterator.next();
+		assertEquals("VHV", edge2.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(515, 240, 22, 70), edge2.getBounds());
+		assertEquals(node1, edge2.getEnd());
+		assertEquals("TRIANGLE", edge2.getEndArrowHead().toString());
+		assertEquals("", edge2.getEndLabel());
+		assertEquals("SOLID", edge2.getLineStyle().toString());
+		assertEquals("e3", edge2.getMiddleLabel());
+		assertEquals(node3, edge2.getStart());
+		assertEquals("NONE", edge2.getStartArrowHead().toString());
+		assertEquals("", edge2.getStartLabel());
+		
+		ClassRelationshipEdge edge3 = (ClassRelationshipEdge) eIterator.next();
+		assertEquals("HVH", edge3.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(570, 191, 90, 24), edge3.getBounds());
+		assertEquals(node4, edge3.getEnd());
+		assertEquals("NONE", edge3.getEndArrowHead().toString());
+		assertEquals("*", edge3.getEndLabel());
+		assertEquals("SOLID", edge3.getLineStyle().toString());
+		assertEquals("e4", edge3.getMiddleLabel());
+		assertEquals(node1, edge3.getStart());
+		assertEquals("DIAMOND", edge3.getStartArrowHead().toString());
+		assertEquals("1", edge3.getStartLabel());
+		
+		ClassRelationshipEdge edge4 = (ClassRelationshipEdge) eIterator.next();
+		assertEquals("HVH", edge4.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(570, 205, 90, 135), edge4.getBounds());
+		assertEquals(node3, edge4.getEnd());
+		assertEquals("NONE", edge4.getEndArrowHead().toString());
+		assertEquals("", edge4.getEndLabel());
+		assertEquals("SOLID", edge4.getLineStyle().toString());
+		assertEquals("e5", edge4.getMiddleLabel());
+		assertEquals(node4, edge4.getStart());
+		assertEquals("BLACK_DIAMOND", edge4.getStartArrowHead().toString());
+		assertEquals("", edge4.getStartLabel());
+		
+		NoteEdge edge5 = (NoteEdge) eIterator.next();
+		assertEquals(new Rectangle2D.Double(708, 229, 74, 81), edge5.getBounds());
+		assertEquals(node5, edge5.getStart());
+		assertEquals(node8, edge5.getEnd());
+		
+		ClassRelationshipEdge edge6 = (ClassRelationshipEdge) eIterator.next();
+		assertEquals("Straight", edge6.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(360, 181, 110, 29), edge6.getBounds());
+		assertEquals(node7, edge6.getEnd());
+		assertEquals("V", edge6.getEndArrowHead().toString());
+		assertEquals("", edge6.getEndLabel());
+		assertEquals("DOTTED", edge6.getLineStyle().toString());
+		assertEquals("e1", edge6.getMiddleLabel());
+		assertEquals(node1, edge6.getStart());
+		assertEquals("NONE", edge6.getStartArrowHead().toString());
+		assertEquals("", edge6.getStartLabel());
 	}
 	
 	@Test

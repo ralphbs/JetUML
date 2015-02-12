@@ -295,6 +295,9 @@
     <void property="lineStyle">
      <object class="ca.mcgill.cs.stg.jetuml.framework.LineStyle" field="DOTTED"/>
     </void>
+    <void property="middleLabel">
+     <string>e2</string>
+    </void>
    </object>
    <object idref="ClassNode0"/>
    <object idref="InterfaceNode0"/>
@@ -307,6 +310,9 @@
     <void property="endArrowHead">
      <object class="ca.mcgill.cs.stg.jetuml.framework.ArrowHead" field="TRIANGLE"/>
     </void>
+    <void property="middleLabel">
+     <string>e3</string>
+    </void>
    </object>
    <object idref="ClassNode1"/>
    <object idref="ClassNode0"/>
@@ -316,8 +322,17 @@
     <void property="bentStyle">
      <object class="ca.mcgill.cs.stg.jetuml.framework.BentStyle" field="HVH"/>
     </void>
+    <void property="endLabel">
+     <string>*</string>
+    </void>
+    <void property="middleLabel">
+     <string>e4</string>
+    </void>
     <void property="startArrowHead">
      <object class="ca.mcgill.cs.stg.jetuml.framework.ArrowHead" field="DIAMOND"/>
+    </void>
+    <void property="startLabel">
+     <string>1</string>
     </void>
    </object>
    <object idref="ClassNode0"/>
@@ -327,6 +342,9 @@
    <object class="ca.mcgill.cs.stg.jetuml.graph.ClassRelationshipEdge">
     <void property="bentStyle">
      <object class="ca.mcgill.cs.stg.jetuml.framework.BentStyle" field="HVH"/>
+    </void>
+    <void property="middleLabel">
+     <string>e5</string>
     </void>
     <void property="startArrowHead">
      <object class="ca.mcgill.cs.stg.jetuml.framework.ArrowHead" field="BLACK_DIAMOND"/>
@@ -347,6 +365,9 @@
     </void>
     <void property="lineStyle">
      <object class="ca.mcgill.cs.stg.jetuml.framework.LineStyle" field="DOTTED"/>
+    </void>
+    <void property="middleLabel">
+     <string>e1</string>
     </void>
    </object>
    <object idref="ClassNode0"/>
