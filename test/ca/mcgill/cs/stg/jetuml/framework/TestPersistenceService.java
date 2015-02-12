@@ -45,6 +45,57 @@ public class TestPersistenceService
 		tmp.delete();
 	}
 	
+	@Test
+	public void testClassDiagramContainment() throws Exception
+	{
+		Graph graph = PersistenceService.read(new FileInputStream("testdata/testPersistenceService2.class.jet"));
+		verifyClassDiagram2(graph);
+		
+		File tmp = new File(TEST_FILE_NAME);
+		tmp.delete();
+		PersistenceService.saveFile(graph, new FileOutputStream(tmp));
+		graph = PersistenceService.read(new FileInputStream(tmp));
+		verifyClassDiagram2(graph);
+		tmp.delete();
+	}
+	
+	private void verifyClassDiagram2(Graph pGraph)
+	{
+		Collection<Node> nodes = pGraph.getNodes();
+		assertEquals(8, nodes.size());
+		Iterator<Node> nIterator = nodes.iterator();
+		PackageNode p1 = (PackageNode) nIterator.next();
+		ClassNode c1 = (ClassNode) nIterator.next();
+		PackageNode p2 = (PackageNode) nIterator.next();
+		NoteNode n1 = (NoteNode) nIterator.next();
+		PackageNode p3 = (PackageNode) nIterator.next();
+		PackageNode p4 = (PackageNode) nIterator.next();
+		InterfaceNode i1 = (InterfaceNode) nIterator.next();
+		ClassNode c2 = (ClassNode) nIterator.next();
+		
+		List<Node> children = p1.getChildren();
+		assertEquals(1, children.size());
+		assertTrue(children.contains(c1));
+		assertEquals(p1, c1.getParent());
+		assertEquals(0, c1.getChildren().size());
+		
+		children = p2.getChildren();
+		assertEquals(0, children.size());
+		assertNull(n1.getParent());
+		
+		children = p3.getChildren();
+		assertEquals(2, children.size());
+		assertTrue(children.contains(p4));
+		assertTrue(children.contains(c2));
+		assertEquals(p3, p4.getParent());
+		assertEquals(p3, c2.getParent());
+		
+		children = p4.getChildren();
+		assertEquals(1, children.size());
+		assertTrue(children.contains(i1));
+		assertEquals(p4, i1.getParent());
+	}
+	
 	private void verifyClassDiagram(Graph pGraph)
 	{
 		Collection<Node> nodes = pGraph.getNodes();
