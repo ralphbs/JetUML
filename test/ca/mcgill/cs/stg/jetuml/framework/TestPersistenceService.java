@@ -2,7 +2,6 @@ package ca.mcgill.cs.stg.jetuml.framework;
 
 import static org.junit.Assert.*;
 
-
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +14,7 @@ import org.junit.Test;
 
 import ca.mcgill.cs.stg.jetuml.graph.CallEdge;
 import ca.mcgill.cs.stg.jetuml.graph.CallNode;
+import ca.mcgill.cs.stg.jetuml.graph.CircularStateNode;
 import ca.mcgill.cs.stg.jetuml.graph.ClassNode;
 import ca.mcgill.cs.stg.jetuml.graph.ClassRelationshipEdge;
 import ca.mcgill.cs.stg.jetuml.graph.Edge;
@@ -27,6 +27,8 @@ import ca.mcgill.cs.stg.jetuml.graph.NoteNode;
 import ca.mcgill.cs.stg.jetuml.graph.PackageNode;
 import ca.mcgill.cs.stg.jetuml.graph.PointNode;
 import ca.mcgill.cs.stg.jetuml.graph.ReturnEdge;
+import ca.mcgill.cs.stg.jetuml.graph.StateNode;
+import ca.mcgill.cs.stg.jetuml.graph.StateTransitionEdge;
 
 public class TestPersistenceService
 {
@@ -57,6 +59,20 @@ public class TestPersistenceService
 		PersistenceService.saveFile(graph, new FileOutputStream(tmp));
 		graph = PersistenceService.read(new FileInputStream(tmp));
 		verifyClassDiagram2(graph);
+		tmp.delete();
+	}
+	
+	@Test
+	public void testStateDiagram() throws Exception
+	{
+		Graph graph = PersistenceService.read(new FileInputStream("testdata/testPersistenceService.state.jet"));
+		verifyStateDiagram(graph);
+		
+		File tmp = new File(TEST_FILE_NAME);
+		tmp.delete();
+		PersistenceService.saveFile(graph, new FileOutputStream(tmp));
+		graph = PersistenceService.read(new FileInputStream(tmp));
+		verifyStateDiagram(graph);
 		tmp.delete();
 	}
 	
@@ -382,5 +398,100 @@ public class TestPersistenceService
 		assertEquals(new Rectangle2D.Double(538, 169, 72, 44), note.getBounds());
 		assertEquals(node8, note.getStart());
 		assertEquals(node9, note.getEnd());
+	}
+	
+	private void verifyStateDiagram(Graph pGraph)
+	{
+		Collection<Node> nodes = pGraph.getNodes();
+		assertEquals(7, nodes.size());
+		
+		Iterator<Node> nIterator = nodes.iterator();
+		StateNode s1 = (StateNode) nIterator.next(); 
+		StateNode s2 = (StateNode) nIterator.next(); 
+		StateNode s3 = (StateNode) nIterator.next(); 
+		CircularStateNode start = (CircularStateNode) nIterator.next(); 
+		CircularStateNode end = (CircularStateNode) nIterator.next(); 
+		NoteNode note = (NoteNode) nIterator.next();
+		PointNode point = (PointNode) nIterator.next();
+		
+		assertEquals(new Rectangle2D.Double(250, 100, 80, 60), s1.getBounds());
+		assertTrue(s1.getChildren().isEmpty());
+		assertEquals("S1", s1.getName().toString());
+		assertNull(s1.getParent());
+		
+		assertEquals(new Rectangle2D.Double(510, 100, 80, 60), s2.getBounds());
+		assertTrue(s2.getChildren().isEmpty());
+		assertEquals("S2", s2.getName().toString());
+		assertNull(s2.getParent());
+		
+		assertEquals(new Rectangle2D.Double(520, 310, 80, 60), s3.getBounds());
+		assertTrue(s3.getChildren().isEmpty());
+		assertEquals("S3", s3.getName().toString());
+		assertNull(s3.getParent());
+		
+		assertEquals(new Rectangle2D.Double(150, 70, 40, 40), start.getBounds());
+		assertTrue(start.getChildren().isEmpty());
+		assertNull(start.getParent());
+		assertFalse(start.isFinal());
+		
+		assertEquals(new Rectangle2D.Double(640, 230, 38, 38), end.getBounds());
+		assertTrue(end.getChildren().isEmpty());
+		assertNull(end.getParent());
+		assertTrue(end.isFinal());
+		
+		assertTrue(note.getChildren().isEmpty());
+		assertEquals("A note\non two lines", note.getText().getText());
+		assertNull(note.getParent());
+		assertEquals(new Rectangle2D.Double(690, 320, 80, 40), note.getBounds());
+		
+		assertEquals(new Rectangle2D.Double(576, 339, 0, 0), point.getBounds());
+		assertTrue(point.getChildren().isEmpty());
+		assertNull(point.getParent());
+		
+		Collection<Edge> edges = pGraph.getEdges();
+		assertEquals(7, edges.size());
+		Iterator<Edge> eIterator = edges.iterator();
+		
+		NoteEdge ne = (NoteEdge) eIterator.next();
+		StateTransitionEdge fromStart = (StateTransitionEdge) eIterator.next(); 
+		StateTransitionEdge e1 = (StateTransitionEdge) eIterator.next(); 
+		StateTransitionEdge e2 = (StateTransitionEdge) eIterator.next(); 
+		StateTransitionEdge self = (StateTransitionEdge) eIterator.next(); 
+		StateTransitionEdge toEnd = (StateTransitionEdge) eIterator.next(); 
+		StateTransitionEdge toS3 = (StateTransitionEdge) eIterator.next(); 
+		
+		assertEquals(new Rectangle2D.Double(576, 339, 114, 1), ne.getBounds());
+		assertEquals(note, ne.getStart());
+		assertEquals(point, ne.getEnd());
+		
+		assertEquals(new Rectangle2D.Double(189, 81, 62, 32), fromStart.getBounds());
+		assertEquals(start, fromStart.getStart());
+		assertEquals(s1, fromStart.getEnd());
+		assertEquals("start", fromStart.getLabel().toString());
+		
+		assertEquals(new Rectangle2D.Double(330, 99, 180, 28), e1.getBounds());
+		assertEquals(s1, e1.getStart());
+		assertEquals(s2, e1.getEnd());
+		assertEquals("e1", e1.getLabel().toString());
+		
+		assertEquals(new Rectangle2D.Double(330, 133, 180, 28), e2.getBounds());
+		assertEquals(s2, e2.getStart());
+		assertEquals(s1, e2.getEnd());
+		assertEquals("e2", e2.getLabel().toString());
+		
+		assertEquals(new Rectangle2D.Double(590, 106, 44, 48), self.getBounds());
+		assertEquals(s2, self.getStart());
+		assertEquals(s2, self.getEnd());
+		assertEquals("self", self.getLabel().toString());
+		
+		assertEquals(new Rectangle2D.Double(587, 260, 57, 50), toEnd.getBounds());
+		assertEquals(s3, toEnd.getStart());
+		assertEquals(end, toEnd.getEnd());
+		assertEquals("", toEnd.getLabel().toString());
+		
+		assertEquals(new Rectangle2D.Double(554, 160, 17, 150), toS3.getBounds());
+		assertEquals(s2, toS3.getStart());
+		assertEquals(s3, toS3.getEnd());
+		assertEquals("", toS3.getLabel().toString());
 	}
 }
