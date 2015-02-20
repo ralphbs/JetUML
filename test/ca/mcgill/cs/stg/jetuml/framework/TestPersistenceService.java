@@ -18,12 +18,15 @@ import ca.mcgill.cs.stg.jetuml.graph.CircularStateNode;
 import ca.mcgill.cs.stg.jetuml.graph.ClassNode;
 import ca.mcgill.cs.stg.jetuml.graph.ClassRelationshipEdge;
 import ca.mcgill.cs.stg.jetuml.graph.Edge;
+import ca.mcgill.cs.stg.jetuml.graph.FieldNode;
 import ca.mcgill.cs.stg.jetuml.graph.Graph;
 import ca.mcgill.cs.stg.jetuml.graph.ImplicitParameterNode;
 import ca.mcgill.cs.stg.jetuml.graph.InterfaceNode;
 import ca.mcgill.cs.stg.jetuml.graph.Node;
 import ca.mcgill.cs.stg.jetuml.graph.NoteEdge;
 import ca.mcgill.cs.stg.jetuml.graph.NoteNode;
+import ca.mcgill.cs.stg.jetuml.graph.ObjectNode;
+import ca.mcgill.cs.stg.jetuml.graph.ObjectReferenceEdge;
 import ca.mcgill.cs.stg.jetuml.graph.PackageNode;
 import ca.mcgill.cs.stg.jetuml.graph.PointNode;
 import ca.mcgill.cs.stg.jetuml.graph.ReturnEdge;
@@ -73,6 +76,20 @@ public class TestPersistenceService
 		PersistenceService.saveFile(graph, new FileOutputStream(tmp));
 		graph = PersistenceService.read(new FileInputStream(tmp));
 		verifyStateDiagram(graph);
+		tmp.delete();
+	}
+	
+	@Test
+	public void testObjectDiagram() throws Exception
+	{
+		Graph graph = PersistenceService.read(new FileInputStream("testdata/testPersistenceService.object.jet"));
+		verifyObjectDiagram(graph);
+		
+		File tmp = new File(TEST_FILE_NAME);
+		tmp.delete();
+		PersistenceService.saveFile(graph, new FileOutputStream(tmp));
+		graph = PersistenceService.read(new FileInputStream(tmp));
+		verifyObjectDiagram(graph);
 		tmp.delete();
 	}
 	
@@ -493,5 +510,145 @@ public class TestPersistenceService
 		assertEquals(s2, toS3.getStart());
 		assertEquals(s3, toS3.getEnd());
 		assertEquals("", toS3.getLabel().toString());
+	}
+	
+	private void verifyObjectDiagram(Graph pGraph)
+	{
+		Collection<Node> nodes = pGraph.getNodes();
+		assertEquals(11, nodes.size());
+		
+		Iterator<Node> nIt = nodes.iterator(); 
+		ObjectNode type1 = (ObjectNode) nIt.next(); 
+		ObjectNode blank = (ObjectNode) nIt.next(); 
+		FieldNode name = (FieldNode) nIt.next(); 
+		ObjectNode object2 = (ObjectNode) nIt.next(); 
+		FieldNode name2 = (FieldNode) nIt.next(); 
+		ObjectNode type3 = (ObjectNode) nIt.next();
+		FieldNode name3 = (FieldNode) nIt.next(); 
+		FieldNode name4 = (FieldNode) nIt.next(); 
+		NoteNode note = (NoteNode) nIt.next(); 
+		PointNode p1 = (PointNode) nIt.next();
+		PointNode p2 = (PointNode) nIt.next();
+		
+		assertEquals(new Rectangle2D.Double(210, 70, 120, 100), type1.getBounds());
+		assertEquals(1, type1.getChildren().size());
+		assertTrue(type1.getChildren().contains(name));
+		assertEquals(":Type1", type1.getName().toString());
+		assertNull(type1.getParent());
+		
+		assertEquals(new Rectangle2D.Double(370, 170, 160, 140), blank.getBounds());
+		List<Node> children = blank.getChildren();
+		assertEquals(3, children.size());
+		assertTrue(children.contains(name2));
+		assertTrue(children.contains(name3));
+		assertTrue(children.contains(name4));
+		assertEquals("", blank.getName().toString());
+		assertNull(blank.getParent());
+		
+		assertEquals(new Rectangle2D.Double(222.5, 149, 87, 16), name.getBounds());
+		children = name.getChildren();
+		assertEquals(0, children.size());
+		assertEquals(0,name.getAxisX(),0.000001);
+		assertEquals("name", name.getName().toString());
+		assertEquals(type1, name.getObjectNode());
+		assertEquals(type1, name.getParent());
+		assertEquals("", name.getValue().toString());
+		assertFalse(name.isBoxedValue());
+		
+		assertEquals(new Rectangle2D.Double(480, 80, 80, 60), object2.getBounds());
+		children = object2.getChildren();
+		assertEquals(0, children.size());
+		assertEquals("object2:", object2.getName().toString());
+		assertNull(object2.getParent());
+		
+		assertEquals(new Rectangle2D.Double(395.5, 247, 122, 16), name2.getBounds());
+		children = name2.getChildren();
+		assertEquals(0, children.size());
+		assertEquals(0,name2.getAxisX(),0.000001);
+		assertEquals("name2", name2.getName().toString());
+		assertEquals(blank, name2.getObjectNode());
+		assertEquals(blank, name2.getParent());
+		assertEquals("test value", name2.getValue().toString());
+		assertFalse(name2.isBoxedValue());
+		
+		assertEquals(new Rectangle2D.Double(570, 190, 80, 60), type3.getBounds());
+		children = type3.getChildren();
+		assertEquals(0, children.size());
+		assertEquals(":Type3", type3.getName().toString());
+		assertNull(type3.getParent());
+		
+		assertEquals(new Rectangle2D.Double(395.5, 268, 122, 16), name3.getBounds());
+		children = name3.getChildren();
+		assertEquals(0, children.size());
+		assertEquals(0,name3.getAxisX(),0.000001);
+		assertEquals("name3", name3.getName().toString());
+		assertEquals(blank, name3.getObjectNode());
+		assertEquals(blank, name3.getParent());
+		assertEquals("value", name3.getValue().toString());
+		assertTrue(name3.isBoxedValue());
+		
+		assertEquals(new Rectangle2D.Double(395.5, 289, 122, 16), name4.getBounds());
+		children = name4.getChildren();
+		assertEquals(0, children.size());
+		assertEquals(0,name4.getAxisX(),0.000001);
+		assertEquals("name4", name4.getName().toString());
+		assertEquals(blank, name4.getObjectNode());
+		assertEquals(blank, name4.getParent());
+		assertEquals("", name4.getValue().toString());
+		assertFalse(name4.isBoxedValue());
+		
+		assertTrue(note.getChildren().isEmpty());
+		assertEquals("A note", note.getText().getText());
+		assertNull(note.getParent());
+		assertEquals(new Rectangle2D.Double(220, 220, 60, 40), note.getBounds());
+		
+		assertEquals(new Rectangle2D.Double(388, 225, 0, 0), p1.getBounds());
+		assertTrue(p1.getChildren().isEmpty());
+		assertNull(p1.getParent());
+		
+		assertEquals(new Rectangle2D.Double(249, 162, 0, 0), p2.getBounds());
+		assertTrue(p2.getChildren().isEmpty());
+		assertNull(p2.getParent());
+		
+		Collection<Edge> edges = pGraph.getEdges();
+		assertEquals(6, edges.size());
+		Iterator<Edge> eIt = edges.iterator();
+		ObjectReferenceEdge o1 = (ObjectReferenceEdge) eIt.next();
+		ObjectReferenceEdge o2 = (ObjectReferenceEdge) eIt.next();
+		ClassRelationshipEdge cr1 = (ClassRelationshipEdge) eIt.next();
+		ObjectReferenceEdge o3 = (ObjectReferenceEdge) eIt.next();
+		NoteEdge ne1 = (NoteEdge) eIt.next();
+		NoteEdge ne2 = (NoteEdge) eIt.next();
+		
+		assertEquals(new Rectangle2D.Double(266, 70, 84, 87), o1.getBounds());
+		assertEquals(name, o1.getStart());
+		assertEquals(type1, o1.getEnd());
+		
+		assertEquals(new Rectangle2D.Double(266, 157, 104, 13), o2.getBounds());
+		assertEquals(name, o2.getStart());
+		assertEquals(blank, o2.getEnd());
+		
+		assertEquals(new Rectangle2D.Double(450, 110, 32, 60), cr1.getBounds());
+		assertEquals("Straight", cr1.getBentStyle().toString());
+		assertEquals(object2, cr1.getEnd());
+		assertEquals("NONE", cr1.getEndArrowHead().toString());
+		assertEquals("", cr1.getEndLabel());
+		assertEquals("SOLID", cr1.getLineStyle().toString());
+		assertEquals("e1", cr1.getMiddleLabel().toString());
+		assertEquals(blank, cr1.getStart());
+		assertEquals("NONE", cr1.getStartArrowHead().toString());
+		assertEquals("", cr1.getStartLabel().toString());
+		
+		assertEquals(new Rectangle2D.Double(456, 190, 114, 107), o3.getBounds());
+		assertEquals(name4, o3.getStart());
+		assertEquals(type3, o3.getEnd());
+		
+		assertEquals(new Rectangle2D.Double(280, 225, 108, 12), ne1.getBounds());
+		assertEquals(note, ne1.getStart());
+		assertEquals(p1, ne1.getEnd());
+		
+		assertEquals(new Rectangle2D.Double(249, 162, 1, 58), ne2.getBounds());
+		assertEquals(note, ne2.getStart());
+		assertEquals(p2, ne2.getEnd());
 	}
 }
