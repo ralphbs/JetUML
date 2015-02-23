@@ -1,12 +1,9 @@
 package ca.mcgill.cs.stg.jetuml.framework;
 
-import java.awt.geom.Point2D;
 import java.beans.DefaultPersistenceDelegate;
 import java.beans.Encoder;
-import java.beans.ExceptionListener;
 import java.beans.Expression;
 import java.beans.PersistenceDelegate;
-import java.beans.Statement;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.IOException;
@@ -14,7 +11,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
 
 import ca.mcgill.cs.stg.jetuml.graph.AbstractNode;
 import ca.mcgill.cs.stg.jetuml.graph.Graph;
@@ -24,13 +20,9 @@ import ca.mcgill.cs.stg.jetuml.graph.Graph;
  * We use long-term bean persistence to save the graph data. 
  * 
  * @author Martin P. Robillard
- *
  */
 public final class PersistenceService
 {
-	// workaround for bug #4646747 in J2SE SDK 1.4.0
-	private static HashMap beanInfos;
-	
 	private static PersistenceDelegate staticFieldDelegate = new DefaultPersistenceDelegate()
 	{
 		@Override
@@ -62,31 +54,6 @@ public final class PersistenceService
 		}
 	};
          
-	static
-	{
-		beanInfos = new HashMap();
-		Class[] cls = new Class[]
-				{
-                  Point2D.Double.class,
-                  BentStyle.class,
-                  ArrowHead.class,
-                  LineStyle.class,
-                  Graph.class,
-                  AbstractNode.class,
-               };
-            for (int i = 0; i < cls.length; i++)
-            {
-               try
-               {
-                  beanInfos.put(cls[i], java.beans.Introspector.getBeanInfo(cls[i]));
-               }         
-               catch (java.beans.IntrospectionException ex)
-               {
-               }
-            }
-         }
-
-	
 	private PersistenceService() {}
 	
 	/**
@@ -112,47 +79,20 @@ public final class PersistenceService
 	/**
      * Saves the current graph in a file. 
      * 
+     * @param pGraph The graph to save
      * @param pOut the stream for saving
      */
 	public static void saveFile(Graph pGraph, OutputStream pOut)
-   {
-      XMLEncoder encoder = new XMLEncoder(pOut);
-         
-      encoder.setExceptionListener(new 
-         ExceptionListener() 
-         {
-            public void exceptionThrown(Exception ex) 
-            {
-               ex.printStackTrace();
-            }
-         });
-      /*
-      The following does not work due to bug #4741757
-        
-      encoder.setPersistenceDelegate(
-         Point2D.Double.class,
-         new DefaultPersistenceDelegate(
-            new String[]{ "x", "y" }) );
-      */
-      encoder.setPersistenceDelegate(Point2D.Double.class, new
-            DefaultPersistenceDelegate()
-            {
-               protected void initialize(Class type, Object oldInstance, Object newInstance, Encoder out) 
-               {
-                  super.initialize(type, oldInstance, newInstance, out);
-                  Point2D p = (Point2D)oldInstance;
-                  out.writeStatement( new Statement(oldInstance, "setLocation", new Object[]{ new Double(p.getX()), new Double(p.getY()) }) );
-               }
-            });
+	{
+		XMLEncoder encoder = new XMLEncoder(pOut);
+		encoder.setPersistenceDelegate(BentStyle.class, staticFieldDelegate);
+		encoder.setPersistenceDelegate(LineStyle.class, staticFieldDelegate);
+		encoder.setPersistenceDelegate(ArrowHead.class, staticFieldDelegate);
       
-      encoder.setPersistenceDelegate(BentStyle.class, staticFieldDelegate);
-      encoder.setPersistenceDelegate(LineStyle.class, staticFieldDelegate);
-      encoder.setPersistenceDelegate(ArrowHead.class, staticFieldDelegate);
+		Graph.setPersistenceDelegate(encoder);
+		AbstractNode.setPersistenceDelegate(encoder);
       
-      Graph.setPersistenceDelegate(encoder);
-      AbstractNode.setPersistenceDelegate(encoder);
-      
-      encoder.writeObject(pGraph);
-      encoder.close();
-   }
+		encoder.writeObject(pGraph);
+		encoder.close();
+	}
 }
