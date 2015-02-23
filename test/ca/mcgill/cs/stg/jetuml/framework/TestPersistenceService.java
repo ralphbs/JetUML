@@ -1,6 +1,9 @@
 package ca.mcgill.cs.stg.jetuml.framework;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -12,6 +15,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import ca.mcgill.cs.stg.jetuml.graph.ActorNode;
 import ca.mcgill.cs.stg.jetuml.graph.CallEdge;
 import ca.mcgill.cs.stg.jetuml.graph.CallNode;
 import ca.mcgill.cs.stg.jetuml.graph.CircularStateNode;
@@ -32,6 +36,7 @@ import ca.mcgill.cs.stg.jetuml.graph.PointNode;
 import ca.mcgill.cs.stg.jetuml.graph.ReturnEdge;
 import ca.mcgill.cs.stg.jetuml.graph.StateNode;
 import ca.mcgill.cs.stg.jetuml.graph.StateTransitionEdge;
+import ca.mcgill.cs.stg.jetuml.graph.UseCaseNode;
 
 public class TestPersistenceService
 {
@@ -92,6 +97,198 @@ public class TestPersistenceService
 		verifyObjectDiagram(graph);
 		tmp.delete();
 	}
+	
+	@Test
+	public void testUseCaseDiagram() throws Exception
+	{
+		Graph graph = PersistenceService.read(new FileInputStream("testdata/testPersistenceService.usecase.jet"));
+		verifyUseCaseDiagram(graph);
+		
+		File tmp = new File(TEST_FILE_NAME);
+		tmp.delete();
+		PersistenceService.saveFile(graph, new FileOutputStream(tmp));
+		graph = PersistenceService.read(new FileInputStream(tmp));
+		verifyUseCaseDiagram(graph);
+		tmp.delete();
+	}
+	
+	private void verifyUseCaseDiagram( Graph pGraph)
+	{
+		Collection<Node> nodes = pGraph.getNodes();
+		assertEquals(9, nodes.size());
+		Iterator<Node> nIt = nodes.iterator();
+		UseCaseNode u1 = (UseCaseNode) nIt.next();
+		UseCaseNode u2 = (UseCaseNode) nIt.next();
+		UseCaseNode u3 = (UseCaseNode) nIt.next();
+		ActorNode a1 = (ActorNode) nIt.next();
+		ActorNode a2 = (ActorNode) nIt.next();
+		NoteNode n1 = (NoteNode) nIt.next();
+		PointNode p1 = (PointNode) nIt.next();
+		UseCaseNode u4 = (UseCaseNode) nIt.next();
+		ActorNode a3 = (ActorNode) nIt.next();
+		
+		assertEquals(new Rectangle2D.Double(440, 40, 120, 40), u1.getBounds());
+		assertEquals(0, u1.getChildren().size());
+		assertEquals("Use case 1", u1.getName().toString());
+		assertNull(u1.getParent());
+		
+		assertEquals(new Rectangle2D.Double(460, 130, 120, 40), u2.getBounds());
+		assertEquals(0, u2.getChildren().size());
+		assertEquals("Use case 2", u2.getName().toString());
+		assertNull(u2.getParent());
+		
+		assertEquals(new Rectangle2D.Double(460, 230, 120, 40), u3.getBounds());
+		assertEquals(0, u3.getChildren().size());
+		assertEquals("Use case 3", u3.getName().toString());
+		assertNull(u3.getParent());
+		
+		assertEquals(new Rectangle2D.Double(270, 50, 60, 80), a1.getBounds());
+		assertEquals(0, a1.getChildren().size());
+		assertEquals("Actor", a1.getName().toString());
+		assertNull(a1.getParent());
+		
+		assertEquals(new Rectangle2D.Double(280, 230, 60, 80), a2.getBounds());
+		assertEquals(0, a2.getChildren().size());
+		assertEquals("Actor2", a2.getName().toString());
+		assertNull(a2.getParent());
+		
+		assertTrue(n1.getChildren().isEmpty());
+		assertEquals("A note", n1.getText().getText());
+		assertNull(n1.getParent());
+		assertEquals(new Rectangle2D.Double(700, 50, 60, 40), n1.getBounds());
+		
+		assertEquals(new Rectangle2D.Double(567, 56, 0, 0), p1.getBounds());
+		assertTrue(p1.getChildren().isEmpty());
+		assertNull(p1.getParent());
+		
+		assertEquals(new Rectangle2D.Double(650, 150, 120, 40), u4.getBounds());
+		assertEquals(0, u4.getChildren().size());
+		assertEquals("Use case 4", u4.getName().toString());
+		assertNull(u4.getParent());
+		
+		assertEquals(new Rectangle2D.Double(190, 140, 60, 80), a3.getBounds());
+		assertEquals(0, a3.getChildren().size());
+		assertEquals("Actor3", a3.getName().toString());
+		assertNull(a3.getParent());
+		
+		Collection<Edge> edges = pGraph.getEdges();
+		assertEquals(10, edges.size());
+		Iterator<Edge> eIt = edges.iterator();
+		
+		ClassRelationshipEdge cr1 = (ClassRelationshipEdge) eIt.next();
+		ClassRelationshipEdge cr2 = (ClassRelationshipEdge) eIt.next();
+		ClassRelationshipEdge cr3 = (ClassRelationshipEdge) eIt.next();
+		NoteEdge ne = (NoteEdge) eIt.next();
+		ClassRelationshipEdge cr4 = (ClassRelationshipEdge) eIt.next();
+		ClassRelationshipEdge cr5 = (ClassRelationshipEdge) eIt.next();
+		ClassRelationshipEdge cr6 = (ClassRelationshipEdge) eIt.next();
+		ClassRelationshipEdge cr7 = (ClassRelationshipEdge) eIt.next();
+		ClassRelationshipEdge cr8 = (ClassRelationshipEdge) eIt.next();
+		ClassRelationshipEdge cr9 = (ClassRelationshipEdge) eIt.next();
+				
+		assertEquals("Straight", cr1.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(330, 60, 110, 34), cr1.getBounds());
+		assertEquals(u1, cr1.getEnd());
+		assertEquals("NONE", cr1.getEndArrowHead().toString());
+		assertEquals("end", cr1.getEndLabel());
+		assertEquals("SOLID", cr1.getLineStyle().toString());
+		assertEquals("mid", cr1.getMiddleLabel());
+		assertEquals(a1, cr1.getStart());
+		assertEquals("NONE", cr1.getStartArrowHead().toString());
+		assertEquals("start", cr1.getStartLabel());
+		
+		assertEquals("Straight", cr2.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(340, 150, 120, 120), cr2.getBounds());
+		assertEquals(u2, cr2.getEnd());
+		assertEquals("NONE", cr2.getEndArrowHead().toString());
+		assertEquals("", cr2.getEndLabel());
+		assertEquals("SOLID", cr2.getLineStyle().toString());
+		assertEquals("e2", cr2.getMiddleLabel());
+		assertEquals(a2, cr2.getStart());
+		assertEquals("NONE", cr2.getStartArrowHead().toString());
+		assertEquals("", cr2.getStartLabel());
+		
+		assertEquals("Straight", cr3.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(340, 250, 120, 29), cr3.getBounds());
+		assertEquals(u3, cr3.getEnd());
+		assertEquals("NONE", cr3.getEndArrowHead().toString());
+		assertEquals("", cr3.getEndLabel());
+		assertEquals("SOLID", cr3.getLineStyle().toString());
+		assertEquals("e3", cr3.getMiddleLabel());
+		assertEquals(a2, cr3.getStart());
+		assertEquals("NONE", cr3.getStartArrowHead().toString());
+		assertEquals("", cr3.getStartLabel());
+		
+		assertEquals(new Rectangle2D.Double(567, 56, 133, 12), ne.getBounds());
+		assertEquals(n1, ne.getStart());
+		assertEquals(p1, ne.getEnd());
+		
+		assertEquals("Straight", cr4.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(498, 80, 29, 50), cr4.getBounds());
+		assertEquals(u1, cr4.getEnd());
+		assertEquals("TRIANGLE", cr4.getEndArrowHead().toString());
+		assertEquals("", cr4.getEndLabel());
+		assertEquals("SOLID", cr4.getLineStyle().toString());
+		assertEquals("e4", cr4.getMiddleLabel());
+		assertEquals(u2, cr4.getStart());
+		assertEquals("NONE", cr4.getStartArrowHead().toString());
+		assertEquals("", cr4.getStartLabel());
+		
+		assertEquals("Straight", cr5.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(515, 170, 80, 60), cr5.getBounds());
+		assertEquals(u3, cr5.getEnd());
+		assertEquals("V", cr5.getEndArrowHead().toString());
+		assertEquals("", cr5.getEndLabel());
+		assertEquals("DOTTED", cr5.getLineStyle().toString());
+		assertEquals("«include» e5", cr5.getMiddleLabel());
+		assertEquals(u2, cr5.getStart());
+		assertEquals("NONE", cr5.getStartArrowHead().toString());
+		assertEquals("", cr5.getStartLabel());
+		
+		assertEquals("Straight", cr6.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(560, 60, 90, 110), cr6.getBounds());
+		assertEquals(u4, cr6.getEnd());
+		assertEquals("NONE", cr6.getEndArrowHead().toString());
+		assertEquals("", cr6.getEndLabel());
+		assertEquals("SOLID", cr6.getLineStyle().toString());
+		assertEquals("e7", cr6.getMiddleLabel());
+		assertEquals(u1, cr6.getStart());
+		assertEquals("NONE", cr6.getStartArrowHead().toString());
+		assertEquals("", cr6.getStartLabel());
+		
+		assertEquals("Straight", cr7.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(250, 130, 50, 50), cr7.getBounds());
+		assertEquals(a1, cr7.getEnd());
+		assertEquals("TRIANGLE", cr7.getEndArrowHead().toString());
+		assertEquals("", cr7.getEndLabel());
+		assertEquals("SOLID", cr7.getLineStyle().toString());
+		assertEquals("g", cr7.getMiddleLabel());
+		assertEquals(a3, cr7.getStart());
+		assertEquals("NONE", cr7.getStartArrowHead().toString());
+		assertEquals("", cr7.getStartLabel());
+		
+		assertEquals("Straight", cr8.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(250, 180, 86, 50), cr8.getBounds());
+		assertEquals(a2, cr8.getEnd());
+		assertEquals("V", cr8.getEndArrowHead().toString());
+		assertEquals("", cr8.getEndLabel());
+		assertEquals("DOTTED", cr8.getLineStyle().toString());
+		assertEquals("«extend»", cr8.getMiddleLabel());
+		assertEquals(a3, cr8.getStart());
+		assertEquals("NONE", cr8.getStartArrowHead().toString());
+		assertEquals("", cr8.getStartLabel());
+		
+		assertEquals("Straight", cr9.getBentStyle().toString());
+		assertEquals(new Rectangle2D.Double(580, 141, 91, 32), cr9.getBounds());
+		assertEquals(u4, cr9.getEnd());
+		assertEquals("V", cr9.getEndArrowHead().toString());
+		assertEquals("", cr9.getEndLabel());
+		assertEquals("DOTTED", cr9.getLineStyle().toString());
+		assertEquals("«extend»", cr9.getMiddleLabel());
+		assertEquals(u2, cr9.getStart());
+		assertEquals("NONE", cr9.getStartArrowHead().toString());
+		assertEquals("", cr9.getStartLabel());
+ 	}
 	
 	private void verifyClassDiagram2(Graph pGraph)
 	{
